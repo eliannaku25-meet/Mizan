@@ -10,7 +10,7 @@ const Cases = () => {
 
   useEffect(() => {
     fetchCases();
-  }, []);
+  }, );
 
   const fetchCases = async () => {
     try {

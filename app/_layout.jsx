@@ -1,10 +1,12 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import MainContainer from './MainContainer.jsx';
+import Navigation from './Navigation'; // Stack navigator with login & tabs
 
 const RootLayout = () => {
   return (
-      <MainContainer />
+
+      <Navigation />  
+
   );
 };
 

@@ -1,51 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import CardComponent from '../components/Card';  // Import the reusable Card component
 
-const Organizations = () => {
-  const organizations = [
-    {
-      name: "Legal Aid Society",
-      description: "Provides free legal assistance to victims of crimes.",
-      contact: "+972-XX-XXXXXXX",
-      category: "Legal",
-    },
-    {
-      name: "Victim Support Center",
-      description: "24/7 support and counseling for crime victims.",
-      contact: "+972-XX-XXXXXXX",
-      category: "Support",
-    },
-    {
-      name: "Citizens' Rights Association",
-      description: "Advocacy and support for civil rights.",
-      contact: "+972-XX-XXXXXXX",
-      category: "Advocacy",
-    },
-    {
-      name: "Community Legal Clinic",
-      description: "Free legal consultations and representation.",
-      contact: "+972-XX-XXXXXXX",
-      category: "Legal",
-    }
-  ];
-
-  // Custom action for the button press
-
-
+const BakeryFour = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Support Organizations</Text>
-      {organizations.map((org, index) => (
-        <CardComponent
-          key={index}
-          title={org.name}
-          category={org.category}
-          description={org.description}
-          contact={org.contact}
-          onButtonPress={() => handleButtonPress(org.name)}  // Pass the button action
-        />
-      ))}
+      <Text style={styles.title}>Bakery Four</Text>
+      <Text style={styles.review}>Perfectly balanced jelly and dough with excellent flavor!</Text>
+      <Text style={styles.rating}>Rating: 4.8/5</Text>
     </View>
   );
 };
@@ -53,14 +14,22 @@ const Organizations = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
-    backgroundColor: '#F9FAFB',
   },
-  header: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+  },
+  review: {
+    fontSize: 16,
+    marginVertical: 10,
+  },
+  rating: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
-export default Organizations;
+export default BakeryFour;

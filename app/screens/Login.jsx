@@ -1,11 +1,11 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { account } from "../../lib/appwrite"; // Ensure this path is correct
+import { account } from "../../lib/appwrite"; // Ensure correct path
 
-// Form validation schema
+// Validation schema
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
@@ -19,20 +19,19 @@ const LoginScreen = ({ navigation }) => {
   const onSubmit = async (data) => {
     try {
       console.log("Logging in with:", data);
-
-      // 🔍 Check if a session already exists
+      
+      // Check if a session exists and clear it
       try {
         const existingSession = await account.get();
         if (existingSession) {
-          console.log("Existing session found:", existingSession);
-          await account.deleteSessions(); // ❌ Clear existing session
+          await account.deleteSessions();
           console.log("Deleted existing session, proceeding to login...");
         }
       } catch (sessionError) {
         console.log("No active session found, proceeding with login...");
       }
-
-      // ✅ Create a new session
+      
+      // Create a new session
       const session = await account.createEmailPasswordSession(data.email, data.password);
       console.log("Login successful:", session);
 
@@ -46,57 +45,92 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Login</Text>
-
+      <Image source={require("../../assets/images/Figma/Rectangle (1).png")} style={styles.logo} />
+      <Text style={styles.title}>Login</Text>
+      
       <Controller
         control={control}
         name="email"
         render={({ field: { onChange, value } }) => (
-          <TextInput 
-            style={styles.input} 
-            placeholder="Email" 
-            value={value} 
-            onChangeText={onChange} 
-            keyboardType="email-address"
-          />
+          <TextInput style={styles.input} placeholder="Email" value={value} onChangeText={onChange} keyboardType="email-address" />
         )}
       />
       {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
-
+      
       <Controller
         control={control}
         name="password"
         render={({ field: { onChange, value } }) => (
-          <TextInput 
-            style={styles.input} 
-            placeholder="Password" 
-            value={value} 
-            onChangeText={onChange} 
-            secureTextEntry
-          />
+          <TextInput style={styles.input} placeholder="Password" value={value} onChangeText={onChange} secureTextEntry />
         )}
       />
       {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
-
+      
       <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-
+      
       <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-        <Text style={styles.link}>Don't have an account? Sign Up</Text>
+        <Text style={styles.signupText}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  header: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 20 },
-  input: { backgroundColor: "white", padding: 12, borderRadius: 8, marginBottom: 15, borderWidth: 1, borderColor: "#D1D5DB" },
-  button: { backgroundColor: "#2563EB", padding: 15, borderRadius: 8, alignItems: "center" },
-  buttonText: { color: "white", fontSize: 16, fontWeight: "bold" },
-  link: { textAlign: "center", marginTop: 10, color: "#2563EB" },
-  error: { color: "red", marginBottom: 10 },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+  },
+  logo: {
+    width: 250,
+    height: 100,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#1C2120",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#F0F0F0",
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    fontSize: 16,
+    color: "#000",
+  },
+  button: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#04445F",
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+  signupText: {
+    marginTop: 20,
+    fontSize: 16,
+    color: "#1C2120",
+  },
+  error: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+  },
 });
 
 export default LoginScreen;

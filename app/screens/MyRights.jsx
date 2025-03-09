@@ -1,53 +1,87 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import * as Location from "expo-location";
 import axios from "axios";
 
-const PoliceStationsMap = () => {
-  const [policeStations, setPoliceStations] = useState([]);
-  const [region, setRegion] = useState({
-    latitude: 32.0853, // Example: Tel Aviv
-    longitude: 34.7818,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  });
+const PlacesMap = () => {
+  const [places, setPlaces] = useState([]);
+  const [region, setRegion] = useState(null);
 
   useEffect(() => {
-    const fetchPoliceStations = async () => {
-      const url = `https://nominatim.openstreetmap.org/search?q=police&format=json&countrycodes=IL`;
-
-      try {
-        const response = await axios.get(url);
-        setPoliceStations(response.data);
-      } catch (error) {
-        console.error("Error fetching police stations:", error);
+    const getUserLocation = async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "Enable location services to use this feature.");
+        return;
       }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      });
     };
 
-    fetchPoliceStations();
+    const fetchPlaces = async () => {
+      const categories = ["police", "hospital", "shelter"];
+      let allResults = [];
+    
+      try {
+        for (const category of categories) {
+          const url = `https://nominatim.openstreetmap.org/search?q=${category}&format=json&countrycodes=IL`;
+          const response = await axios.get(url);
+          allResults = [...allResults, ...response.data];
+        }
+    
+        const formattedPlaces = allResults.map((place) => ({
+          lat: parseFloat(place.lat),
+          lon: parseFloat(place.lon),
+          name: place.display_name.split(",")[0], // Shorten name
+          address: place.display_name,
+        }));
+    
+        console.log("Fetched Places:", formattedPlaces);
+        setPlaces(formattedPlaces);
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+    
+
+    fetchPlaces();
+    getUserLocation();
   }, []);
 
   return (
-    <MapView style={styles.map} initialRegion={region}>
-      {policeStations.map((station, index) => (
-        <Marker
-          key={index}
-          coordinate={{
-            latitude: parseFloat(station.lat),
-            longitude: parseFloat(station.lon),
-          }}
-          title={station.display_name.split(",")[0]}
-          description={station.display_name}
-        />
-      ))}
-    </MapView>
+    <View style={styles.container}>
+      {region ? (
+        <MapView style={styles.map} region={region}>
+          {places.map((place, index) => (
+            <Marker
+              key={index}
+              coordinate={{ latitude: place.lat, longitude: place.lon }}
+              title={place.name}
+              pinColor={place.type === "police" ? "blue" : place.type === "hospital" ? "red" : "green"}
+            />
+          ))}
+        </MapView>
+      ) : (
+        <Text>Loading map...</Text>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   map: {
     flex: 1,
   },
 });
 
-export default PoliceStationsMap;
+export default PlacesMap;

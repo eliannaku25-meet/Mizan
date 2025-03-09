@@ -10,7 +10,7 @@ const Cases = () => {
 
   useEffect(() => {
     fetchCases();
-  }, );
+  }, []);
 
   const fetchCases = async () => {
     try {
@@ -31,12 +31,12 @@ const Cases = () => {
   // Function to determine badge color based on status
   const getStatusColor = (status) => {
     switch (status) {
-      case "Under Review":
-        return "#FCD34D"; // Yellow
+      case "Under solved":
+        return "#FFD700"; // Yellow
       case "In Progress":
-        return "#60A5FA"; // Blue
+        return "#EAB82C"; // Blue
       case "Pending":
-        return "#D1D5DB"; // Gray
+        return "#AEE3F8"; // Gray
       default:
         return "#D1D5DB";
     }
@@ -44,7 +44,7 @@ const Cases = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Pending Cases</Text>
+      <Text style={styles.header}>My Cases</Text>
       {error && <Text style={styles.errorText}>{error}</Text>}
       <FlatList
         data={cases}
@@ -69,9 +69,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   header: {
-    fontSize: 24,
+    fontSize: 36, // Larger font size
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 50,
+    backgroundColor: '#04445E', // Blue background
+    color: 'white', // White text color
+    paddingVertical: 40,
+    textAlign: 'center',
   },
   errorText: {
     color: 'red',

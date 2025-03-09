@@ -1,11 +1,11 @@
 import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { account, ID } from "../../lib/appwrite"; // Make sure this matches the correct path
+import { account, ID } from "../../lib/appwrite"; // Ensure correct path
 
-// Form validation schema
+// Validation schema
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -19,35 +19,27 @@ const SignupScreen = ({ navigation }) => {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Signing up with:", data); // Add a log for debugging
-
-      // Use Appwrite's account.create() to register the user
+      console.log("Signing up with:", data);
       const user = await account.create(ID.unique(), data.email, data.password);
-
-      console.log("Signup successful:", user); // Log the user data
-
+      console.log("Signup successful:", user);
       Alert.alert("Signup Successful", "You can now log in!");
-      navigation.navigate("Login"); // Navigate to Login screen after signup
+      navigation.navigate("Login");
     } catch (error) {
       console.error("Signup Error:", error);
-      Alert.alert("Signup Failed", error.message); // Show error if signup fails
+      Alert.alert("Signup Failed", error.message);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Sign Up</Text>
-
+      <Image source={require("../../assets/images/Figma/Rectangle (1).png")} style={styles.logo} />
+      <Text style={styles.title}>Create New Account</Text>
+      
       <Controller
         control={control}
         name="name"
         render={({ field: { onChange, value } }) => (
-          <TextInput 
-            style={styles.input} 
-            placeholder="Full Name" 
-            value={value} 
-            onChangeText={onChange} 
-          />
+          <TextInput style={styles.input} placeholder="Full Name" value={value} onChangeText={onChange} />
         )}
       />
       {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
@@ -56,13 +48,7 @@ const SignupScreen = ({ navigation }) => {
         control={control}
         name="email"
         render={({ field: { onChange, value } }) => (
-          <TextInput 
-            style={styles.input} 
-            placeholder="Email" 
-            value={value} 
-            onChangeText={onChange} 
-            keyboardType="email-address"
-          />
+          <TextInput style={styles.input} placeholder="Email" value={value} onChangeText={onChange} keyboardType="email-address" />
         )}
       />
       {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
@@ -71,13 +57,7 @@ const SignupScreen = ({ navigation }) => {
         control={control}
         name="password"
         render={({ field: { onChange, value } }) => (
-          <TextInput 
-            style={styles.input} 
-            placeholder="Password" 
-            value={value} 
-            onChangeText={onChange} 
-            secureTextEntry
-          />
+          <TextInput style={styles.input} placeholder="Password" value={value} onChangeText={onChange} secureTextEntry />
         )}
       />
       {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
@@ -85,22 +65,68 @@ const SignupScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-
+      
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.link}>Already have an account? Login</Text>
+        <Text style={styles.loginText}>Already Registered? Log in here.</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  header: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 20 },
-  input: { backgroundColor: "white", padding: 12, borderRadius: 8, marginBottom: 15, borderWidth: 1, borderColor: "#D1D5DB" },
-  button: { backgroundColor: "#2563EB", padding: 15, borderRadius: 8, alignItems: "center" },
-  buttonText: { color: "white", fontSize: 16, fontWeight: "bold" },
-  link: { textAlign: "center", marginTop: 10, color: "#2563EB" },
-  error: { color: "red", marginBottom: 10 },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    padding: 20,
+  },
+  logo: {
+    width: 250,
+    height: 100,
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#1C2120",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#F0F0F0",
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    fontSize: 16,
+    color: "#000",
+  },
+  button: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "#04445F",
+    borderRadius: 6,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+  },
+  loginText: {
+    marginTop: 20,
+    fontSize: 16,
+    color: "#1C2120",
+  },
+  error: {
+    color: "red",
+    fontSize: 14,
+    marginBottom: 10,
+  },
 });
 
 export default SignupScreen;

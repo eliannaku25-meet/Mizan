@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const CardComponent = ({ title, description,  children }) => {
+const CardComponent = ({ title, description, children }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
-      {children} {/* This allows dynamic elements (badges, buttons, etc.) inside the card */}
+      <View>{children}</View> {/* Wrap children inside View */}
     </View>
   );
 };

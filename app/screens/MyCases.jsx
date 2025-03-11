@@ -1,42 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { config, database } from '../../lib/appwrite';
+import { config, database, account } from '../../lib/appwrite';  // Import the account module
 import CardComponent from '../components/Card';  // Assuming CardComponent is in 'components' folder
 import BadgeComponent from '../components/Badge';  // A custom badge component
 
 const Cases = () => {
   const [cases, setCases] = useState([]);
   const [error, setError] = useState(null);
+  const [userID, setUserID] = useState(null); // Store the user ID
 
   useEffect(() => {
-    fetchCases();
+    fetchUserID();
   }, []);
 
-  const fetchCases = async () => {
+  const fetchUserID = async () => {
     try {
-      const { documents } = await database.listDocuments(config.db, config.col.crimes); // Use config.col.crimes
-      const formattedCases = documents.map(doc => ({
+      const session = await account.getSession('current');  // Get current session
+      setUserID(session.userId);  // Set the user ID state
+      fetchCases(session.userId); // Fetch cases for the current user
+    } catch (error) {
+      setError("Error fetching user session.");
+    }
+  };
+
+  const fetchCases = async (userId) => {
+    try {
+      const { documents } = await database.listDocuments(config.db, config.col.crimes);  // Use config.col.crimes
+      const filteredCases = documents.filter(doc => doc.victimID === userId); // Filter cases by victimID
+      const formattedCases = filteredCases.map(doc => ({
         id: doc.$id,
         crimeTitle: doc.crime,
         crimeDescription: doc.description,
         crimeDate: doc.date,
-        status: "Pending", // Default status until further updates
+        status: "Pending",  // Default status until further updates
       }));
       setCases(formattedCases);
     } catch (error) {
       setError(error.message);
     }
   };
-  
+
   // Function to determine badge color based on status
   const getStatusColor = (status) => {
     switch (status) {
-      case "Under solved":
-        return "#FFD700"; // Yellow
+      case "solved":
+        return "#D1D5DB"; // Yellow
       case "In Progress":
         return "#EAB82C"; // Blue
       case "Pending":
-        return "#AEE3F8"; // Gray
+        return "#FFD700"; // Gray
       default:
         return "#D1D5DB";
     }
@@ -52,8 +64,10 @@ const Cases = () => {
         renderItem={({ item }) => (
           <CardComponent title={item.crimeTitle} description={item.crimeDescription}>
             <View style={styles.cardFooter}>
-              <Text style={styles.dateText}>Filed: {item.crimeDate}</Text>
-              <BadgeComponent text={item.status} color={getStatusColor(item.status)} />
+              <Text style={styles.dateText}>Filed: {String(item.crimeDate)}</Text>
+              <View>
+                <BadgeComponent text={item.status} color={getStatusColor(item.status)} />
+              </View>
             </View>
           </CardComponent>
         )}

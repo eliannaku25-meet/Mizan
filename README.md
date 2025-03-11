@@ -30,10 +30,12 @@ This mobile application enables users to report unresolved crimes, track case st
 - **Crime Reporting**: Users can submit crime reports, including a title, description, and date.
 - **Case Tracking**: View the status of reported crimes.
 - **Legal Aid & Organizations**: Access a list of organizations providing legal and victim support.
-- **Police Stations Map**: Locate nearby police stations using an interactive map.
+- **Resources Map**: Locate nearby police stations using an interactive map.
 - **User Authentication**: Secure login and account management (Future feature).
+- **Orginizations carosel**: Users can scroll through differnt orginizations thay can help them. 
 
-## Future Roadmap & Upcoming Features????
+
+## Future Roadmap & Upcoming Features
 - **Push Notifications**: Alerts for case status updates.
 - **User Profiles**: Track past reports and interactions.
 - **Multilingual Support**: Broaden accessibility.

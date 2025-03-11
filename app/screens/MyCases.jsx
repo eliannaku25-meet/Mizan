@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { config, database, account } from '../../lib/appwrite';
-import CardComponent from '../components/Card';
+import { config, database, account } from '../../lib/appwrite';  // Import the account module
+import CardComponent from '../components/Card';  // Assuming CardComponent is in 'components' folder
+import BadgeComponent from '../components/Badge';  // A custom badge component
 
 const Cases = () => {
   const [cases, setCases] = useState([]);
   const [error, setError] = useState(null);
-  const [userID, setUserID] = useState(null);
+  const [userID, setUserID] = useState(null); // Store the user ID
 
   useEffect(() => {
     fetchUserID();
@@ -14,9 +15,9 @@ const Cases = () => {
 
   const fetchUserID = async () => {
     try {
-      const session = await account.getSession('current');
-      setUserID(session.userId);
-      fetchCases(session.userId);
+      const session = await account.getSession('current');  // Get current session
+      setUserID(session.userId);  // Set the user ID state
+      fetchCases(session.userId); // Fetch cases for the current user
     } catch (error) {
       setError("Error fetching user session.");
     }
@@ -24,18 +25,32 @@ const Cases = () => {
 
   const fetchCases = async (userId) => {
     try {
-      const { documents } = await database.listDocuments(config.db, config.col.crimes);
-      const filteredCases = documents.filter(doc => doc.victimID === userId);
+      const { documents } = await database.listDocuments(config.db, config.col.crimes);  // Use config.col.crimes
+      const filteredCases = documents.filter(doc => doc.victimID === userId); // Filter cases by victimID
       const formattedCases = filteredCases.map(doc => ({
         id: doc.$id,
         crimeTitle: doc.crime,
         crimeDescription: doc.description,
         crimeDate: doc.date,
-        status: "In Progress",
+        status: "Pending",  // Default status until further updates
       }));
       setCases(formattedCases);
     } catch (error) {
       setError(error.message);
+    }
+  };
+
+  // Function to determine badge color based on status
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "solved":
+        return "#D1D5DB"; // Yellow
+      case "In Progress":
+        return "#EAB82C"; // Blue
+      case "Pending":
+        return "#FFD700"; // Gray
+      default:
+        return "#D1D5DB";
     }
   };
 
@@ -47,11 +62,14 @@ const Cases = () => {
         data={cases}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <CardComponent 
-            title={item.crimeTitle} 
-            description={item.crimeDescription} 
-            status={item.status} 
-          />
+          <CardComponent title={item.crimeTitle} description={item.crimeDescription}>
+            <View style={styles.cardFooter}>
+              <Text style={styles.dateText}>Filed: {String(item.crimeDate)}</Text>
+              <View>
+                <BadgeComponent text={item.status} color={getStatusColor(item.status)} />
+              </View>
+            </View>
+          </CardComponent>
         )}
       />
     </View>
@@ -65,17 +83,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   header: {
-    fontSize: 36,
+    fontSize: 36, // Larger font size
     fontWeight: 'bold',
     marginBottom: 50,
-    backgroundColor: '#04445E',
-    color: 'white',
+    backgroundColor: '#04445E', // Blue background
+    color: 'white', // White text color
     paddingVertical: 40,
     textAlign: 'center',
   },
   errorText: {
     color: 'red',
     marginBottom: 10,
+  },
+  cardFooter: {
+    marginTop: 10,
+    alignItems: 'flex-end',
+  },
+  dateText: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 5,
   },
 });
 

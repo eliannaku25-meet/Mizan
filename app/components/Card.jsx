@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const CardComponent = ({ title, description, children }) => {
+const CardComponent = ({ title, description, status }) => {
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{description}</Text>
-      <View>{children}</View> {/* Wrap children inside View */}
+      <Text style={styles.statusText}>Status: {status}</Text>
     </View>
   );
 };
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#AEE3F8', // Set font color to AEE3F8
+    color: '#AEE3F8',
   },
   description: {
     backgroundColor: '#AEE3F8',
@@ -36,7 +36,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 5,
     marginBottom: 10,
-  }
+  },
+  statusText: {
+    marginTop: 10,
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
 });
 
 export default CardComponent;

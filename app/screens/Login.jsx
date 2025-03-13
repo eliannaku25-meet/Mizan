@@ -3,43 +3,46 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } fro
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { account } from "../../lib/appwrite"; // Ensure correct path
+import { account } from "../../lib/appwrite"; // Import account module for authentication
 
-// Validation schema
+// Validation schema for login form fields
 const schema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup.string().min(6, "Password must be at least 6 characters").required("Password is required"),
 });
 
 const LoginScreen = ({ navigation }) => {
+  // Destructuring hook form methods and state
   const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema), // Using Yup for form validation
   });
 
+  // Handles form submission and login process
   const onSubmit = async (data) => {
     try {
       console.log("Logging in with:", data);
-      
-      // Check if a session exists and clear it
+
+      // Check if a session already exists, and delete if found
       try {
         const existingSession = await account.get();
         if (existingSession) {
-          await account.deleteSessions();
+          await account.deleteSessions(); // Deleting any active sessions before login
           console.log("Deleted existing session, proceeding to login...");
         }
       } catch (sessionError) {
         console.log("No active session found, proceeding with login...");
       }
-      
-      // Create a new session
+
+      // Create a new session with email and password
       const session = await account.createEmailPasswordSession(data.email, data.password);
       console.log("Login successful:", session);
 
+      // Alert the user and navigate to the main screen after successful login
       Alert.alert("Login Successful", "Welcome back!");
       navigation.navigate("Main");
     } catch (error) {
-      console.error("Login Error:", error);
-      Alert.alert("Login Failed", error.message);
+      console.error("Login Error:", error); // Log error if login fails
+      Alert.alert("Login Failed", error.message); // Show error message in case of failure
     }
   };
 
@@ -48,6 +51,7 @@ const LoginScreen = ({ navigation }) => {
       <Image source={require("../../assets/images/Figma/Rectangle (1).png")} style={styles.logo} />
       <Text style={styles.title}>Login</Text>
       
+      {/* Email input field */}
       <Controller
         control={control}
         name="email"
@@ -55,8 +59,9 @@ const LoginScreen = ({ navigation }) => {
           <TextInput style={styles.input} placeholder="Email" value={value} onChangeText={onChange} keyboardType="email-address" />
         )}
       />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>} {/* Email validation error */}
       
+      {/* Password input field */}
       <Controller
         control={control}
         name="password"
@@ -64,12 +69,14 @@ const LoginScreen = ({ navigation }) => {
           <TextInput style={styles.input} placeholder="Password" value={value} onChangeText={onChange} secureTextEntry />
         )}
       />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>} {/* Password validation error */}
       
+      {/* Login button */}
       <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       
+      {/* Link to navigate to the signup screen */}
       <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
         <Text style={styles.signupText}>Don't have an account? Sign Up</Text>
       </TouchableOpacity>

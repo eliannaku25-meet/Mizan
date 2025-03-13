@@ -1,46 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
-import { config, database, account } from '../../lib/appwrite';  // Import the account module
-import CardComponent from '../components/Card';  // Assuming CardComponent is in 'components' folder
-import BadgeComponent from '../components/Badge';  // A custom badge component
+import { config, database, account } from '../../lib/appwrite'; // Import the account module
+import CardComponent from '../components/Card'; // Assuming CardComponent is in 'components' folder
+import BadgeComponent from '../components/Badge'; // Custom Badge component
 
 const Cases = () => {
-  const [cases, setCases] = useState([]);
-  const [error, setError] = useState(null);
-  const [userID, setUserID] = useState(null); // Store the user ID
+  const [cases, setCases] = useState([]);  // Stores the list of cases
+  const [error, setError] = useState(null);  // Error state for displaying errors
+  const [userID, setUserID] = useState(null); // Stores the user ID to fetch relevant cases
 
+  // Fetch the user session when the component mounts
   useEffect(() => {
     fetchUserID();
   }, []);
 
+  // Fetch the current user's ID and then retrieve their cases
   const fetchUserID = async () => {
     try {
-      const session = await account.getSession('current');  // Get current session
+      const session = await account.getSession('current');  // Fetch the current session
       setUserID(session.userId);  // Set the user ID state
-      fetchCases(session.userId); // Fetch cases for the current user
+      fetchCases(session.userId); // Fetch the cases associated with this user
     } catch (error) {
-      setError("Error fetching user session.");
+      setError("Error fetching user session."); // Set error if session fetching fails
     }
   };
 
+  // Fetch the list of cases associated with the given user ID
   const fetchCases = async (userId) => {
     try {
-      const { documents } = await database.listDocuments(config.db, config.col.crimes);  // Use config.col.crimes
-      const filteredCases = documents.filter(doc => doc.victimID === userId); // Filter cases by victimID
+      const { documents } = await database.listDocuments(config.db, config.col.crimes); // Retrieve crime cases
+      const filteredCases = documents.filter(doc => doc.victimID === userId); // Filter by victim ID
       const formattedCases = filteredCases.map(doc => ({
         id: doc.$id,
         crimeTitle: doc.crime,
         crimeDescription: doc.description,
         crimeDate: doc.date,
-        status: "Pending",  // Default status until further updates
+        status: "Pending", // Default status until updated
       }));
-      setCases(formattedCases);
+      setCases(formattedCases); // Set the formatted cases to the state
     } catch (error) {
-      setError(error.message);
+      setError(error.message); // Set error message if fetching cases fails
     }
   };
 
-  // Function to determine badge color based on status
+  // Function to determine badge color based on the status of the case
   const getStatusColor = (status) => {
     switch (status) {
       case "solved":
@@ -50,24 +53,22 @@ const Cases = () => {
       case "Pending":
         return "#FFD700"; // Gray
       default:
-        return "#D1D5DB";
+        return "#D1D5DB"; // Default color for unknown status
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>My Cases</Text>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={styles.errorText}>{error}</Text>} {/* Show error message if there's an error */}
       <FlatList
         data={cases}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id} // Use unique ID for key
         renderItem={({ item }) => (
           <CardComponent title={item.crimeTitle} description={item.crimeDescription}>
             <View style={styles.cardFooter}>
               <Text style={styles.dateText}>Filed: {String(item.crimeDate)}</Text>
-              <View>
-                <BadgeComponent text={item.status} color={getStatusColor(item.status)} />
-              </View>
+              <BadgeComponent text={item.status} color={getStatusColor(item.status)} /> {/* Render badge with status color */}
             </View>
           </CardComponent>
         )}
@@ -83,11 +84,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   header: {
-    fontSize: 36, // Larger font size
+    fontSize: 36, // Larger font size for the header
     fontWeight: 'bold',
     marginBottom: 50,
-    backgroundColor: '#04445E', // Blue background
-    color: 'white', // White text color
+    backgroundColor: '#04445E', // Dark blue background
+    color: 'white', // White text color for contrast
     paddingVertical: 40,
     textAlign: 'center',
   },

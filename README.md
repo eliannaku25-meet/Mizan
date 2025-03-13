@@ -16,7 +16,7 @@ This mobile application enables users to report unresolved crimes, track case st
 
 2. Navigate to the project directory:
    ```sh
-   cd crime-reporting-app???
+   cd Mizan???
    ```
 3. Install dependencies:
    ```sh
@@ -37,7 +37,7 @@ This mobile application enables users to report unresolved crimes, track case st
 
 ## Future Roadmap & Upcoming Features
 - **Push Notifications**: Alerts for case status updates.
-- **User Profiles**: Track past reports and interactions.
+- **User Profiles**: have the homepage say, welcome, user's name.
 - **Multilingual Support**: Broaden accessibility.
 - **Chat Support**: Direct assistance from legal advisors.
 

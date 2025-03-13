@@ -5,7 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { account, ID } from "../../lib/appwrite"; // Ensure correct path
 
-// Validation schema
+// Validation schema using Yup
 const schema = yup.object().shape({
   name: yup.string().required("Name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -13,13 +13,16 @@ const schema = yup.object().shape({
 });
 
 const SignupScreen = ({ navigation }) => {
+  // Set up react-hook-form with Yup validation
   const { control, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
+  // Handle form submission
   const onSubmit = async (data) => {
     try {
       console.log("Signing up with:", data);
+      // Call the Appwrite account create function to register the user
       const user = await account.create(ID.unique(), data.email, data.password);
       console.log("Signup successful:", user);
       Alert.alert("Signup Successful", "You can now log in!");
@@ -32,9 +35,11 @@ const SignupScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {/* Display company logo */}
       <Image source={require("../../assets/images/Figma/Rectangle (1).png")} style={styles.logo} />
       <Text style={styles.title}>Create New Account</Text>
       
+      {/* Name input field with validation */}
       <Controller
         control={control}
         name="name"
@@ -44,6 +49,7 @@ const SignupScreen = ({ navigation }) => {
       />
       {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
 
+      {/* Email input field with validation */}
       <Controller
         control={control}
         name="email"
@@ -53,6 +59,7 @@ const SignupScreen = ({ navigation }) => {
       />
       {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
 
+      {/* Password input field with validation */}
       <Controller
         control={control}
         name="password"
@@ -62,10 +69,12 @@ const SignupScreen = ({ navigation }) => {
       />
       {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
 
+      {/* Submit button to trigger form submission */}
       <TouchableOpacity style={styles.button} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
       
+      {/* Navigation link to login screen */}
       <TouchableOpacity onPress={() => navigation.navigate("Login")}>
         <Text style={styles.loginText}>Already Registered? Log in here.</Text>
       </TouchableOpacity>
@@ -73,6 +82,7 @@ const SignupScreen = ({ navigation }) => {
   );
 };
 
+// Styles for the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,

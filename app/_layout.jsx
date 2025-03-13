@@ -2,11 +2,11 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigation from './Navigation'; // Stack navigator with login & tabs
 
+// Root layout component that sets up the navigation container
 const RootLayout = () => {
   return (
-
-      <Navigation />  
-
+    // Renders the navigation structure defined in the Navigation component
+    <Navigation />
   );
 };
 

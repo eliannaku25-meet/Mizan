@@ -31,7 +31,7 @@ This mobile application enables users to report unresolved crimes, track case st
 - **Case Tracking**: View the status of reported crimes.
 - **Legal Aid & Organizations**: Access a list of organizations providing legal and victim support.
 - **Resources Map**: Locate nearby police stations using an interactive map.
-- **User Authentication**: Secure login and account management (Future feature).
+- **User Authentication**: Secure login and account management 
 - **Orginizations carosel**: Users can scroll through differnt orginizations thay can help them. 
 
 

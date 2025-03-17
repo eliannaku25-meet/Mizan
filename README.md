@@ -16,7 +16,7 @@ This mobile application enables users to report unresolved crimes, track case st
 
 2. Navigate to the project directory:
    ```sh
-   cd Mizan???
+   cd Mizan
    ```
 3. Install dependencies:
    ```sh
@@ -43,7 +43,7 @@ This mobile application enables users to report unresolved crimes, track case st
 
 ## Developer Credits & Contributions
 - **Elianna Kulak** - Lead Developer
-- Open to contributions! Feel free to fork the repository and submit pull requests.
+- email: eliannabeatle@gmail.com
 
 ## Contact
 For any questions or contributions, reach out via GitHub or email.
